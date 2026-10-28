@@ -34,6 +34,7 @@ function App() {
   const [search, setSearch] = useState('') // filter for all / due soon for subs
   const [filter, setFilter] = useState('all')
   const [modal, setModal] = useState(null) 
+  const [authMode, setAuthMode] = useState('signin')
   const [authOpen, setAuthOpen] = useState(false)
   const [toast, setToast] = useState('') // success message
   const [deletingId, setDeletingId] = useState(null) // track which subs is being deleted
@@ -149,6 +150,17 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setAuthMode('reset')
+        setAuthOpen(true)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
   async function signOut() { // for sign out
     const { error } = await supabase.auth.signOut()
     if (error) setLoadError(error.message)
@@ -167,7 +179,14 @@ function App() {
         sessionLoading={sessionLoading}
         darkMode={darkMode}
         onToggleTheme={toggleTheme}
-        onOpenAuth={() => setAuthOpen(true)}
+        onOpenAuth={() => {
+          setAuthMode('signin')
+          setAuthOpen(true)
+        }}
+        onChangePassword={() => {
+          setAuthMode('change')
+          setAuthOpen(true)
+        }}
         onSignOut={signOut}
       />
 
@@ -239,7 +258,7 @@ function App() {
           onSave={saveSubscription}
         />
       )}
-      {authOpen && <Auth onClose={() => setAuthOpen(false)} />}
+      {authOpen && <Auth initialMode={authMode} onClose={() => setAuthOpen(false)} />}
       {toast && <div className="toast" role="status"><Check size={16} /> {toast}</div>}
     </div>
   )

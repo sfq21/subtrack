@@ -1,6 +1,6 @@
 import { CreditCard, LogIn, Moon, Sun } from 'lucide-react'
 
-export default function Header({ session, sessionLoading, darkMode, onToggleTheme, onOpenAuth, onSignOut }) {
+export default function Header({ session, sessionLoading, darkMode, onToggleTheme, onOpenAuth,onChangePassword, onSignOut }) {
   return (
     <header className="topbar">
       <a className="brand" href="#" aria-label="SubTrack home">
@@ -20,6 +20,7 @@ export default function Header({ session, sessionLoading, darkMode, onToggleThem
         {session ? (
           <>
             <span className="account-label">{session.user.email}</span>
+            <button className="button button-outline" type="button" onClick={onChangePassword}>Change password</button>
             <button className="button button-outline signout-button" type="button" onClick={onSignOut}>Sign out</button>
           </>
         ) : !sessionLoading && (
