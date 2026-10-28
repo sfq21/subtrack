@@ -6,4 +6,4 @@ store_client = create_client(settings.supabase_url, settings.supabase_service_ro
 # result = store_client.auth.sign_in_with_password({ # swagger authentication
 #     "email": "cheatcafe69@gmail.com", "password": "admin1234"
 # })
-print(result.session.access_token) # print the access token for the particular user
+# print(result.session.access_token) # print the access token for the particular user
