@@ -683,7 +683,7 @@ a {
 
 .subscription-row {
   display: grid;
-  grid-template-columns: 42px minmax(155px, 1.4fr) minmax(145px, 1fr) 115px auto;
+  grid-template-columns: 42px minmax(155px, 1.4fr) minmax(130px, 0.9fr) minmax(170px, 1.2fr) 115px auto;
   align-items: center;
   gap: 15px;
   min-height: 82px;
@@ -1461,6 +1461,7 @@ a {
 .dark-mode .filter-select select,
 .dark-mode .subscription-form input {
   color: #e2e8e3;
+  background-color: #1a201c;
 }
 
 .dark-mode .search-box input::placeholder,

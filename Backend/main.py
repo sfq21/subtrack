@@ -12,15 +12,12 @@ app = FastAPI(title = "SubTrack API")
 def read_root():
     return {"message": "SubTrack API", "docs": "/docs", "health": "/health"}
 
-frontend_origins = [origin.strip() for origin in settings.frontend_origin.split(",") if origin.strip()]
-frontend_origins.extend(["http://localhost:5173", "http://127.0.0.1:5173"])
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=list(dict.fromkeys(frontend_origins)),
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_origins = [origin.strip() for origin in settings.frontend_origin.split(",")],
+    allow_credentials = True,
+    allow_methods = ["GET", "POST", "PUT", "DELETE"],
+    allow_headers = ["Authorization", "Content-Type"],
 )
 
 app.include_router(subscription_router)

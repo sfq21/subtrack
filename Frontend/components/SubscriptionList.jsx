@@ -14,6 +14,11 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
   year: 'numeric',
 })
 
+const updatedAtFormatter = new Intl.DateTimeFormat(undefined, {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+})
+
 function daysUntil(date) {
   if (!date) return Number.POSITIVE_INFINITY
   const today = new Date()
@@ -78,6 +83,7 @@ export default function SubscriptionList({
               <select value={filter} onChange={(event) => onFilterChange(event.target.value)} aria-label="Filter subscriptions">
                 <option value="all">All subscriptions</option>
                 <option value="upcoming">Ending soon</option>
+                <option value="expired">Expired</option>
               </select>
               <ChevronDown size={15} />
             </label>
@@ -102,9 +108,17 @@ export default function SubscriptionList({
                     <span className="renewal-label">END DATE</span>
                     <strong>{subscription.renewalDate ? dateFormatter.format(subscription.renewalDate) : 'Not available'}</strong>
                   </div>
+                  <div className="renewal-info">
+                    <span className="renewal-label">LAST UPDATED</span>
+                    <strong>
+                      {subscription.updated_at
+                        ? updatedAtFormatter.format(new Date(subscription.updated_at))
+                        : 'Not available'}
+                    </strong>
+                  </div>
                   <span className={`status-pill ${isOverdue ? 'status-ended' : days <= 7 ? 'status-soon' : 'status-active'}`}>
                     <span className="status-dot" />
-                    {isOverdue ? 'Ended' : days === 0 ? 'Today' : days === 1 ? '1 day left' : days <= 7 ? `${days} days left` : 'On track'}
+                    {isOverdue ? 'Ended' : days === 0 ? 'Today' : days <= 7 ? `${days} days left` : `${days} days left`}
                   </span>
                   <div className="row-actions">
                     <button className="row-action" onClick={() => onEdit(subscription)}>Edit</button>

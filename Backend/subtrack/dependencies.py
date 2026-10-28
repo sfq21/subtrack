@@ -5,11 +5,11 @@ from fastapi import Depends, HTTPException, Header
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from subtrack.clients import store_client
 
-bearer_scheme = HTTPBearer(auto_error=False)
+bearer_scheme = HTTPBearer(auto_error=False) # for extracting token, if there's no user it will return as none
 
-def current_user(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> UUID:
+def current_user(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> UUID: # will run httpbearer then create credent
     try:
-        user = store_client.auth.get_user(credentials.credentials).user
+        user = store_client.auth.get_user(credentials.credentials).user # get the user using the token from supabase in clients.py
         if user is None:
             raise HTTPException(401, "Missing User")
         return UUID(str(user.id))
