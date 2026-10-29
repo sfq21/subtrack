@@ -1582,3 +1582,7 @@ a {
     padding: 0;
   }
 }
+
+.avatar,.tiny-avatar{border:0;background:#e5ecca;color:#496333;border-radius:50%;font-weight:700;display:inline-grid;place-items:center}
+.avatar{width:34px;height:34px}
+.tiny-avatar{width:26px;height:26px;font-size:11px}

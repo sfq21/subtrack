@@ -19,7 +19,7 @@ export default function Header({ session, sessionLoading, darkMode, onToggleThem
         </button>
         {session ? (
           <>
-            <span className="account-label">{session.user.email}</span>
+            <button className="avatar" title={session.user.email}>{session.user.email?.slice(0, 1).toUpperCase()}</button>
             <button className="button button-outline signout-button" type="button" onClick={onSignOut}>Sign out</button>
           </>
         ) : !sessionLoading && (

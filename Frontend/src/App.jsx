@@ -183,18 +183,22 @@ function App() {
       ) : (
         <>
           <main className="dashboard">
-            {alerts.length > 0 && (
-              <section className="alert-banner" aria-label="Renewal alerts">
+            {alerts.map((alert) => (
+              <section className="alert-banner" aria-label="Renewal alert" key={alert.id}>
                 <span className="alert-icon"><Bell size={17} /></span>
                 <div>
                   <strong>Subscription ending soon</strong>
-                  <p>{alerts.map((alert) => alert.descr).join(' ')}</p>
+                  <p>{alert.descr}</p>
                 </div>
-                <button className="plain-icon" onClick={() => setAlerts([])} aria-label="Dismiss alerts">
+                <button
+                  className="plain-icon"
+                  onClick={() => setAlerts((current) => current.filter((item) => item.id !== alert.id))}
+                  aria-label="Dismiss alert"
+                >
                   <X size={17} />
                 </button>
               </section>
-            )}
+            ))}
             <section className="welcome-row">
               <div>
                 <div className="eyebrow">YOUR PERSONAL OVERVIEW</div>
