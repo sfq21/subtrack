@@ -23,6 +23,8 @@ npm install
 npm run dev
 ```
 
-The app uses Supabase email/password authentication and sends the current access token to the API. It reads `/subs` and `/alerts`, and creates, updates, and deletes subscriptions through `/subs` and `/subs/{subs_id}`. The backend currently expects multipart form fields named `names`, `price`, `startd`, and `duration`; the duration is in days.
+The app uses Supabase email/password authentication and sends the current access token to the API. It reads `/subs`, `/subs/price-history`, and `/alerts`, and creates, updates, and deletes subscriptions through `/subs` and `/subs/{subs_id}`. Subscription forms include `names`, `price`, `startd`, `duration`, and `category`; the duration is in days. Categories are selected from Entertainment, Productivity, Utilities, Education, Health & Fitness, Shopping, and Other.
+
+Price history is recorded when a subscription is added and whenever its price or billing-cycle duration changes. The monthly chart compares monthly-equivalent amounts and does not estimate months before tracking begins. Apply `Supabase/schema.sql` to add the category and price history tables to an existing database before deploying the updated backend.
 
 Use `npm run lint` and `npm run build` to check the frontend.

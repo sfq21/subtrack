@@ -593,6 +593,137 @@ a {
   border-radius: 14px;
 }
 
+.price-history-section {
+  margin-top: 20px;
+  padding: 26px;
+  background: #fff;
+  border: 1px solid #eeece7;
+  border-radius: 14px;
+}
+
+.price-history-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.price-history-heading h2 {
+  margin: 8px 0 5px;
+  color: var(--ink);
+  font-size: 20px;
+  letter-spacing: -0.6px;
+}
+
+.price-history-heading p,
+.chart-footnote {
+  margin: 0;
+  color: #858984;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.chart-selection-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.chart-subscription-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 17px;
+}
+
+.chart-subscription-option {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+  color: #5e635f;
+  font-size: 11px;
+}
+
+.chart-subscription-option input {
+  accent-color: var(--accent);
+}
+
+.chart-subscription-option span {
+  overflow: hidden;
+  max-width: 190px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chart-empty-hint {
+  color: #858984;
+  font-size: 11px;
+}
+
+.price-chart-scroll {
+  width: 100%;
+  margin-top: 12px;
+  overflow-x: auto;
+}
+
+.price-chart {
+  display: block;
+  width: 100%;
+  min-width: 560px;
+  overflow: visible;
+}
+
+.chart-grid-line {
+  stroke: #ecebe6;
+  stroke-width: 1;
+}
+
+.chart-axis-label {
+  fill: #858984;
+  font-family: inherit;
+  font-size: 10px;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 10px 0 0 62px;
+}
+
+.chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #5e635f;
+  font-size: 10px;
+}
+
+.chart-legend-item > span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.chart-footnote {
+  margin: 10px 0 0 62px;
+  font-size: 10px;
+}
+
+.chart-message {
+  display: grid;
+  min-height: 130px;
+  place-items: center;
+  color: #858984;
+  font-size: 12px;
+  text-align: center;
+}
+
+.chart-message.notice {
+  display: block;
+  min-height: 0;
+}
+
 .section-heading {
   display: flex;
   align-items: flex-end;
@@ -735,6 +866,18 @@ a {
 .subscription-main > span {
   color: #6f7771;
   font-size: 11px;
+  font-weight: 600;
+}
+
+.subscription-main .category-tag {
+  display: inline-block;
+  width: fit-content;
+  margin-top: 5px;
+  padding: 3px 7px;
+  color: #597362;
+  background: #edf3ef;
+  border-radius: 20px;
+  font-size: 9px;
   font-weight: 600;
 }
 
@@ -966,7 +1109,8 @@ a {
   font-weight: 600;
 }
 
-.subscription-form input {
+.subscription-form input,
+.subscription-form select {
   width: 100%;
   height: 43px;
   padding: 0 12px;
@@ -1097,6 +1241,19 @@ a {
     align-items: flex-start;
   }
 
+  .price-history-section {
+    padding: 20px 16px;
+  }
+
+  .price-chart {
+    min-width: 620px;
+  }
+
+  .chart-legend,
+  .chart-footnote {
+    margin-left: 0;
+  }
+
   .subscription-row {
     grid-template-columns: 42px minmax(100px, 1fr) 115px auto;
   }
@@ -1167,16 +1324,30 @@ a {
     gap: 15px;
   }
 
+  .price-history-heading {
+    flex-direction: column;
+  }
+
   .list-controls {
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .search-box {
-    flex: 1;
+    flex: 1 1 100%;
   }
 
   .search-box input {
     width: 100%;
+  }
+
+  .filter-select {
+    flex: 1 1 0;
+  }
+
+  .filter-select select {
+    width: 100%;
+    max-width: none;
   }
 
   .subscription-row {
@@ -1406,7 +1577,8 @@ a {
 }
 
 .dark-mode .summary-card,
-.dark-mode .subscriptions-section {
+.dark-mode .subscriptions-section,
+.dark-mode .price-history-section {
   background: #202622;
   border-color: #343b36;
 }
@@ -1451,7 +1623,8 @@ a {
 
 .dark-mode .search-box,
 .dark-mode .filter-select,
-.dark-mode .subscription-form input {
+.dark-mode .subscription-form input,
+.dark-mode .subscription-form select {
   color: #aeb8b0;
   background: #1a201c;
   border-color: #3a433c;
@@ -1459,7 +1632,8 @@ a {
 
 .dark-mode .search-box input,
 .dark-mode .filter-select select,
-.dark-mode .subscription-form input {
+.dark-mode .subscription-form input,
+.dark-mode .subscription-form select {
   color: #e2e8e3;
   background-color: #1a201c;
 }
@@ -1499,6 +1673,30 @@ a {
 .dark-mode .subscription-main > span,
 .dark-mode .row-action {
   color: #b0bbb2;
+}
+
+.dark-mode .subscription-main .category-tag {
+  color: #b1d0b8;
+  background: #2b3b30;
+}
+
+.dark-mode .price-history-heading h2,
+.dark-mode .chart-subscription-option,
+.dark-mode .chart-legend-item {
+  color: #e1e7e2;
+}
+
+.dark-mode .price-history-heading p,
+.dark-mode .chart-footnote,
+.dark-mode .chart-empty-hint,
+.dark-mode .chart-message,
+.dark-mode .chart-axis-label {
+  color: #a1aaa3;
+  fill: #a1aaa3;
+}
+
+.dark-mode .chart-grid-line {
+  stroke: #343b36;
 }
 
 .dark-mode .muted,
@@ -1558,7 +1756,8 @@ a {
   color: #c2cbc4;
 }
 
-.dark-mode .subscription-form input {
+.dark-mode .subscription-form input,
+.dark-mode .subscription-form select {
   background: #191f1b;
 }
 

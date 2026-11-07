@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ArrowRight, X } from 'lucide-react'
+import { SUBSCRIPTION_CATEGORIES } from '../src/lib/categories'
 
 function todayAsInput() {
   const today = new Date()
@@ -12,6 +13,7 @@ export default function Editor({ subscription, onClose, onSave }) {
   const [price, setPrice] = useState(subscription ? String(subscription.price) : '')
   const [startd, setStartd] = useState(subscription?.startd?.slice(0, 10) || todayAsInput())
   const [duration, setDuration] = useState(subscription ? String(subscription.duration) : '30')
+  const [category, setCategory] = useState(subscription?.category || 'Other')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
@@ -20,7 +22,7 @@ export default function Editor({ subscription, onClose, onSave }) {
     setBusy(true)
     setError('')
     try {
-      await onSave({ names, price, startd, duration })
+      await onSave({ names, price, startd, duration, category })
     } catch (saveError) {
       setError(saveError.message || 'Could not save this subscription.')
     } finally {
@@ -55,6 +57,14 @@ export default function Editor({ subscription, onClose, onSave }) {
           <label>
             Cycle start date
             <input type="date" value={startd} onChange={(event) => setStartd(event.target.value)} required />
+          </label>
+          <label>
+            Category
+            <select value={category} onChange={(event) => setCategory(event.target.value)}>
+              {SUBSCRIPTION_CATEGORIES.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
           </label>
           {error && <div className="notice error" role="alert">{error}</div>}
           <button className="button button-primary modal-submit" type="submit" disabled={busy}>

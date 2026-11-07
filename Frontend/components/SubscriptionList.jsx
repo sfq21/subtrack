@@ -7,6 +7,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react'
+import { SUBSCRIPTION_CATEGORIES } from '../src/lib/categories'
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
   month: 'short',
@@ -33,9 +34,11 @@ function formatAmount(value) {
 
 export default function SubscriptionList({
   deletingId,
+  categoryFilter,
   filter,
   loading,
   onAdd,
+  onCategoryFilterChange,
   onDelete,
   onEdit,
   onFilterChange,
@@ -87,6 +90,15 @@ export default function SubscriptionList({
               </select>
               <ChevronDown size={15} />
             </label>
+            <label className="filter-select">
+              <select value={categoryFilter} onChange={(event) => onCategoryFilterChange(event.target.value)} aria-label="Filter by category">
+                <option value="all">All categories</option>
+                {SUBSCRIPTION_CATEGORIES.map((category) => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+              <ChevronDown size={15} />
+            </label>
           </div>
         </div>
 
@@ -103,6 +115,7 @@ export default function SubscriptionList({
                   <div className="subscription-main">
                     <h3>{subscription.names}</h3>
                     <span>{formatAmount(subscription.price)} <span className="muted">/ {subscription.duration} days</span></span>
+                    <span className="category-tag">{subscription.category || 'Other'}</span>
                   </div>
                   <div className="renewal-info">
                     <span className="renewal-label">END DATE</span>

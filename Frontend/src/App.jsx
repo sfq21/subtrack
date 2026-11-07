@@ -5,6 +5,7 @@ import Editor from '../components/Editor'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 import Hero from '../components/Hero'
+import PriceHistoryChart from '../components/PriceHistoryChart'
 import SubscriptionList from '../components/SubscriptionList'
 import { useSession } from '../hooks/useSession'
 import { api } from './lib/api'
@@ -27,18 +28,25 @@ function daysUntil(date) { // Count how many days left
 function App() {
   const { session, loading: sessionLoading, error: sessionError } = useSession() // check if the user logged in
   const [subscriptions, setSubscriptions] = useState([]) // select the subs with the current user id
+  const [priceHistoryState, setPriceHistoryState] = useState({ requestKey: '', history: [], error: '' })
+  const [selectedPriceHistoryIds, setSelectedPriceHistoryIds] = useState([])
   const [alerts, setAlerts] = useState([]) // select the alert where the subs_id == user_id
   const [loadedUserId, setLoadedUserId] = useState(null) //
   const [refreshKey, setRefreshKey] = useState(0)
   const [loadError, setLoadError] = useState('') // handle errror message if API fails
   const [search, setSearch] = useState('') // filter for all / due soon for subs
   const [filter, setFilter] = useState('all')
+  const [categoryFilter, setCategoryFilter] = useState('all')
   const [modal, setModal] = useState(null) 
   const [authOpen, setAuthOpen] = useState(false)
   const [toast, setToast] = useState('') // success message
   const [deletingId, setDeletingId] = useState(null) // track which subs is being deleted
   const [darkMode, setDarkMode] = useState(() => window.localStorage.getItem('subtrack-theme') === 'dark') // toggle between dark and light
   const loading = Boolean(session && loadedUserId !== session.user.id)
+  const priceHistoryRequestKey = session ? `${session.user.id}:${refreshKey}` : ''
+  const priceHistoryLoading = Boolean(session && priceHistoryState.requestKey !== priceHistoryRequestKey)
+  const priceHistory = priceHistoryState.requestKey === priceHistoryRequestKey ? priceHistoryState.history : []
+  const priceHistoryError = priceHistoryState.requestKey === priceHistoryRequestKey ? priceHistoryState.error : ''
 
   useEffect(() => { // To load user's subs from backend
     if (!session) return undefined // check if user sign in if no user the code does not run
@@ -77,6 +85,25 @@ function App() {
   }, [refreshKey, session])
 
   useEffect(() => {
+    if (!session) return undefined
+    let cancelled = false
+    api('/subs/price-history').then((data) => {
+      if (cancelled) return
+      setPriceHistoryState({ requestKey: priceHistoryRequestKey, history: data, error: '' })
+    }).catch((error) => {
+      if (cancelled) return
+      setPriceHistoryState({
+        requestKey: priceHistoryRequestKey,
+        history: [],
+        error: error.message || 'Could not load price history.',
+      })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [priceHistoryRequestKey, session])
+
+  useEffect(() => {
     if (!toast) return undefined
     const timeout = window.setTimeout(() => setToast(''), 3200) // delay for message disappear
     return () => window.clearTimeout(timeout)
@@ -94,6 +121,7 @@ function App() {
 
   const visibleSubscriptions = useMemo(() => upcoming.filter((subscription) => { // start the list with the subs that almost expired
     const matchesSearch = subscription.names.toLowerCase().includes(search.trim().toLowerCase()) // for search
+    const matchesCategory = categoryFilter === 'all' || (subscription.category || 'Other') === categoryFilter
     const days = daysUntil(subscription.renewalDate) // get the count of day until expired from daysUntil function
     let matchesFilter = true
     if (filter === "upcoming") {
@@ -101,8 +129,8 @@ function App() {
     } else if (filter === "expired") {
       matchesFilter = days < 0
     }
-    return matchesSearch && matchesFilter
-  }), [filter, search, upcoming])
+    return matchesSearch && matchesFilter && matchesCategory
+  }), [categoryFilter, filter, search, upcoming])
 
   const summary = useMemo(() => {
     const active = upcoming.filter((subscription) => daysUntil(subscription.renewalDate) >= 0) // keep only subs that have not expired
@@ -123,6 +151,7 @@ function App() {
     formData.append('price', values.price)
     formData.append('startd', values.startd)
     formData.append('duration', values.duration)
+    formData.append('category', values.category)
     const isEditing = Boolean(modal.subscription) // check if the subs exist
 
     await api(
@@ -132,6 +161,12 @@ function App() {
     setModal(null) // close the popup
     setToast(isEditing ? 'Subscription updated' : 'Subscription added')
     setRefreshKey((current) => current + 1) // refresh data
+  }
+
+  function togglePriceHistorySubscription(subscriptionId) {
+    setSelectedPriceHistoryIds((current) => current.includes(subscriptionId)
+      ? current.filter((id) => id !== subscriptionId)
+      : [...current, subscriptionId])
   }
 
   async function deleteSubscription(subscription) { // function for delete subs
@@ -219,9 +254,11 @@ function App() {
 
             <SubscriptionList
               deletingId={deletingId}
+              categoryFilter={categoryFilter}
               filter={filter}
               loading={loading}
               onAdd={() => setModal({ subscription: null })}
+              onCategoryFilterChange={setCategoryFilter}
               onDelete={deleteSubscription}
               onEdit={(subscription) => setModal({ subscription })}
               onFilterChange={setFilter}
@@ -230,6 +267,14 @@ function App() {
               summary={summary}
               subscriptions={subscriptions}
               visibleSubscriptions={visibleSubscriptions}
+            />
+            <PriceHistoryChart
+              history={priceHistory}
+              historyError={priceHistoryError}
+              loading={priceHistoryLoading}
+              onToggleSubscription={togglePriceHistorySubscription}
+              selectedSubscriptionIds={selectedPriceHistoryIds}
+              subscriptions={subscriptions}
             />
           </main>
           <Footer />
